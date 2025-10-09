@@ -30,7 +30,7 @@ const PlaceHolderLoginScreen = () => {
   const [isLoading, setIsLoading] = useState(false);
   const slideCurvedRectangle = useRef(new Animated.Value(height)).current;
   const slideAnim = useRef(new Animated.Value(300)).current;
-  const opacityAnim = useRef(new Animated.Value(0)).current; // ⬅️ tambahkan ini
+  const opacityAnim = useRef(new Animated.Value(0)).current;
   const [showPassword, setShowPassword] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [isAppReady, setIsAppReady] = useState(false);

@@ -15,17 +15,16 @@ export const API_URL = "https://sia-pt.polytechnic.astra.ac.id/stn-air/";
 
 const apiClient = axios.create({ baseURL: API_URL, timeout: 1000 });
 
-// POST tanpa body / untuk get all data
 export const postUser = async (param, body = {}) => {
   try {
     const response = await apiClient.post(`api/${param}`, body);
 
-    // Jika berhasil, log data yang diterima
+    // log berhasil
     console.log("API call success. Data received:", response.data);
 
     return response.data;
   } catch (error) {
-    // Jika gagal, log pesan error dan detail respons jika ada
+    // log gagal
     console.error("API call failed.");
     console.error("Error message:", error.message);
     if (error.response) {

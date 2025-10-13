@@ -141,7 +141,7 @@ const NotifikasiScreen = ({ navigation }) => {
           <Text
             style={[styles.tabText, activeTab === "read" && styles.activeTabText]}
           >
-         ✅ {t("read")}
+            {t("read")}
         </Text>
         </TouchableOpacity>
       </View>

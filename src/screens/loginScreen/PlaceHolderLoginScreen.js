@@ -85,23 +85,22 @@ const PlaceHolderLoginScreen = () => {
           password: password,
         });
 
-        // Jika ada error dari backend
         if (data === "ERROR") {
           alert("Terjadi kesalahan saat login.");
-          return null; // jangan lanjut
+          return null;
         }
 
-        // Jika login gagal
+        // gagal
         if (
           Array.isArray(data) &&
           data.length > 0 &&
           data[0].Status === "LOGIN FAILED"
         ) {
           alert("Nama akun atau kata sandi salah.");
-          return null; // jangan lanx`jut
+          return null; 
         }
 
-        return data[0]; // login berhasil
+        return data[0]; // ok
       } catch (error) {
         console.error("Gagal mengambil data:", error);
         alert("Terjadi kesalahan saat login.");

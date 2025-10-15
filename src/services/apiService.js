@@ -13,25 +13,26 @@ import axios from "axios";
 
 export const API_URL = "https://sia-pt.polytechnic.astra.ac.id/stn-air/";
 
-const apiClient = axios.create({ baseURL: API_URL, timeout: 1000 });
+const apiClient = axios.create({
+  baseURL: API_URL,
+  timeout: 10000,
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
+});
 
 export const postUser = async (param, body = {}) => {
   try {
     const response = await apiClient.post(`api/${param}`, body);
-
-    // log berhasil
-    console.log("API call success. Data received:", response.data);
-
+    console.log("✅ API success:", response.data);
     return response.data;
   } catch (error) {
-    // log gagal
-    console.error("API call failed.");
-    console.error("Error message:", error.message);
+    console.error("❌ API call failed:", error.message);
+    console.error("Code:", error.code);
     if (error.response) {
-      console.error("Error response data:", error.response.data);
-      console.error("Status code:", error.response.status);
+      console.error("Response:", error.response.data);
     }
-
     throw error;
   }
 };

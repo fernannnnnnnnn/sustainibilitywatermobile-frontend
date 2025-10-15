@@ -112,7 +112,7 @@ const PlaceHolderLoginScreen = () => {
     if (profile) {
       setUserProfile(profile);
     }
-    console.log("Data profileeeeeee:", profile);
+    console.log("Data profile:", profile);
 
     try {
       await postUser(
@@ -127,7 +127,7 @@ const PlaceHolderLoginScreen = () => {
       username: profile.username,
       role: profile.role,
       nama: profile.nama,
-      foto: profile.foto || "", // gunakan hasil profile
+      foto: profile.foto || "", 
     };
 
     const userJson = JSON.stringify(userInfo);

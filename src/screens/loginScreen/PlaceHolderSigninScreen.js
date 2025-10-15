@@ -72,11 +72,11 @@ const PlaceHolderSigninScreen = () => {
 
   const formDataRef = useRef({
     username: "",
-    password: "",
-    departemen: "",
     nama: "",
+    departemen: "",
     tgllahir: "",
     email: "",
+    password: "",
   });
   const signUpSchema = yup.object().shape({
     username: yup.string().required("Username wajib diisi"),

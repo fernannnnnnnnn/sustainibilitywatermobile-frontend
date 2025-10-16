@@ -2,22 +2,12 @@
 // import { View, Text, FlatList, Dimensions, StyleSheet } from "react-native";
 // import { postUser } from "../../services/apiService";
 
-import React, { useRef, useEffect, useState, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  View,
-  Text,
-  FlatList,
-  StyleSheet,
-  Dimensions,
-  ScrollView,
-  ActivityIndicator,
-  TouchableOpacity,
-} from "react-native";
+import { Dimensions, FlatList, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { LineChart } from "react-native-chart-kit";
-import { postUser } from "../../services/apiService";
-import { Picker } from "@react-native-picker/picker";
+import { postUser, postUserArray } from "../../services/apiService";
 
 // const months = [
 //   "JANUARI",
@@ -337,20 +327,7 @@ import { Picker } from "@react-native-picker/picker";
 // import { postUser } from "../../services/apiService";
 // import { Picker } from "@react-native-picker/picker";
 
-const months = [
-  "Jan",
-  "Feb",
-  "Mar",
-  "Apr",
-  "Mei",
-  "Jun",
-  "Jul",
-  "Agu",
-  "Sep",
-  "Okt",
-  "Nov",
-  "Des",
-];
+const months = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
 const SCREEN_WIDTH = Dimensions.get("window").width;
 const SIDE_MARGIN = 8;
 const CARD_WIDTH = SCREEN_WIDTH * 0.7;
@@ -371,11 +348,7 @@ const CardPerMonth = ({
   return (
     <View style={styles.card}>
       {month !== "YTD" && <Text style={styles.header}>{month}</Text>}
-      {ytdText && (
-        <Text
-          style={styles.ytdLabel ?? styles.header}
-        >{`${month}. ${ytdText} INDICATOR OVER / LOWER`}</Text>
-      )}
+      {ytdText && <Text style={styles.ytdLabel ?? styles.header}>{`${month}. ${ytdText} INDICATOR OVER / LOWER`}</Text>}
       <View style={styles.row}>
         <Text style={styles.label}>{t("water_consumption")}</Text>
         <Text>{`${waterConsumption} L`}</Text>
@@ -414,9 +387,7 @@ export default function HomeTabAir() {
   const currentMonthIndex = new Date().getMonth();
   const currentMonthName = months[currentMonthIndex];
 
-  const [monthlyConsumptionData, setMonthlyConsumptionData] = useState(
-    Array(12).fill(0)
-  );
+  const [monthlyConsumptionData, setMonthlyConsumptionData] = useState(Array(12).fill(0));
   const [aktualIndividuData, setAktualIndividuData] = useState([]);
   const [targetData, setTargetData] = useState(Array(12).fill(0));
   const [withdrawalReduction, setWithdrawalReduction] = useState([]);
@@ -433,33 +404,34 @@ export default function HomeTabAir() {
         try {
           const [a, b, c, d] = await Promise.all([
             postUser("Dashboard/GetDataChartMonthly", { year: currentYear }),
-            postUser("Dashboard/GetDataAktualIndividu", { year: currentYear }),
+            postUserArray("Dashboard/GetDataAktualIndividu", { year: currentYear }),
             postUser("Dashboard/GetDataTargetIndividu", { year: currentYear }),
             postUser("Dashboard/GetTargetReduction", {}),
           ]);
 
+          // console.log("Type of c:", typeof c);
+          // console.log("Is array:", Array.isArray(c));
+
           if (a !== "ERROR") {
             const arr = Array(12).fill(0);
-            a.forEach((item) => (arr[item.Bulan - 1] = item.TotalKonsumsi));
+            const parsedA = typeof a === "string" ? JSON.parse(a) : a;
+            parsedA.forEach((item) => (arr[item.Bulan - 1] = item.TotalKonsumsi));
             setMonthlyConsumptionData(arr);
           }
 
           if (b !== "ERROR") setAktualIndividuData(b);
           if (c !== "ERROR" && c.length > 0) {
             const arr = Array(12).fill(0);
-            c.forEach((item) => {
+            const parsedC = typeof c === "string" ? JSON.parse(c) : c;
+            parsedC.forEach((item) => {
               const bulanIndex = item.bulan - 1;
-              arr[bulanIndex] = parseFloat(
-                item.trg_target_bulanan_individu || 0
-              );
+              arr[bulanIndex] = parseFloat(item.trg_target_bulanan_individu || 0);
             });
             setTargetData(arr);
           }
 
           if (d !== "ERROR" && d[0]) {
-            setTargetReductionValue(
-              parseFloat(d[0].trg_persentase_target_penghematan || 0)
-            );
+            setTargetReductionValue(parseFloat(d[0].trg_persentase_target_penghematan || 0));
           }
 
           const reduksi = Array(12)
@@ -523,9 +495,7 @@ export default function HomeTabAir() {
     // Kembali ke YTD jika idle 10 detik
     if (loopedData[index] !== "YTD") {
       timeoutRef.current = setTimeout(() => {
-        const nearestYTD = loopedData.findIndex(
-          (item, i) => item === "YTD" && i >= middleIndex
-        );
+        const nearestYTD = loopedData.findIndex((item, i) => item === "YTD" && i >= middleIndex);
         if (flatListRef.current && nearestYTD >= 0) {
           flatListRef.current.scrollToIndex({
             index: nearestYTD,
@@ -546,15 +516,11 @@ export default function HomeTabAir() {
 
     // Data default
     const water = isYTD
-      ? monthlyConsumptionData
-          .slice(0, currentMonthIndex + 1)
-          .reduce((a, b) => a + b, 0)
+      ? monthlyConsumptionData.slice(0, currentMonthIndex + 1).reduce((a, b) => a + b, 0)
       : monthlyConsumptionData[dataIndex] || 0;
 
     const aktual = isYTD
-      ? aktualIndividuData
-          .slice(0, currentMonthIndex + 1)
-          .reduce((acc, curr) => acc + (curr.TotalKonsumsi || 0), 0)
+      ? aktualIndividuData.slice(0, currentMonthIndex + 1).reduce((acc, curr) => acc + (curr.TotalKonsumsi || 0), 0)
       : aktualIndividuData[dataIndex]?.TotalKonsumsi || 0;
 
     //DENGAN MEMBUAT
@@ -563,10 +529,7 @@ export default function HomeTabAir() {
       ? targetData.slice(0, currentMonthIndex + 1).reduce((a, b) => a + b, 0)
       : targetData[dataIndex] || 0;
 
-    const ytdReductionArray = withdrawalReduction.slice(
-      0,
-      currentMonthIndex + 1
-    );
+    const ytdReductionArray = withdrawalReduction.slice(0, currentMonthIndex + 1);
     const reduksi = isYTD
       ? ytdReductionArray.reduce((a, b) => a + b, 0) / ytdReductionArray.length
       : withdrawalReduction[dataIndex] || 0;
@@ -630,6 +593,7 @@ export default function HomeTabAir() {
         // setIsError(false);
         try {
           let endpoint = "";
+          let data;
           if (filterVolume === "volume") {
             endpoint = "Dashboard/GetTopKomponen";
           } else if (filterVolume === "lokasi") {
@@ -638,13 +602,25 @@ export default function HomeTabAir() {
             endpoint = "Dashboard/GetTopTanggal";
           }
 
-          const data = await postUser(`${endpoint}`, {
+          const response = await postUser(`${endpoint}`, {
             year: currentYear,
           });
 
-          if (data === "ERROR") {
+          console.log("Type of response:", typeof response);
+          console.log("Is array:", Array.isArray(response));
+
+          if (response === "ERROR") {
             setIsError(true);
           } else {
+            if (typeof response === "string") {
+              try {
+                data = JSON.parse(response);
+              } catch (parseError) {
+                console.error("Error parsing data:", parseError);
+                setIsError(true);
+                return;
+              }
+            } else data = response;
             setTopKomponenData(data);
           }
         } catch (error) {
@@ -661,20 +637,7 @@ export default function HomeTabAir() {
   const [chartLabels, setChartLabels] = useState({
     daily: Array.from({ length: 24 }, (_, i) => `${i}:00`),
     weekly: ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"],
-    monthly: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "Mei",
-      "Jun",
-      "Jul",
-      "Agu",
-      "Sep",
-      "Okt",
-      "Nov",
-      "Des",
-    ],
+    monthly: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
     yearly: [], // Akan diisi dinamis dari API
   });
 
@@ -696,9 +659,32 @@ export default function HomeTabAir() {
             endpoint = "Dashboard/GetDataChartYearly";
           }
 
-          const data = await postUser(endpoint, { year: currentYear });
-          console.log("Data grafik: ", data);
-          if (data === "ERROR") {
+          const response = await postUser(endpoint, { year: currentYear });
+          let data;
+          // logging untuk liat tipe data.
+          console.log("Data grafik: ", response);
+          console.log("Filter Type:", filterType);
+          console.log("Is Array:", Array.isArray(response));
+          console.log("Type of Data:", typeof response);
+
+          // parsing jika data merupakan JSON bukan array
+          if (typeof response === "string") {
+            try {
+              data = JSON.parse(response);
+            } catch (parseError) {
+              console.error("Error parsing data:", parseError);
+              setIsError(true);
+              return;
+            }
+          } else data = response;
+
+          if (response === "ERROR") {
+            setIsError(true);
+            return;
+          }
+
+          if (!Array.isArray(data)) {
+            console.error("Data is not an array after parsing:", data);
             setIsError(true);
             return;
           }
@@ -713,15 +699,7 @@ export default function HomeTabAir() {
           } else if (filterType === "weekly") {
             const weeklyData = new Array(7).fill(0);
             data.forEach((item) => {
-              const index = [
-                "Senin",
-                "Selasa",
-                "Rabu",
-                "Kamis",
-                "Jumat",
-                "Sabtu",
-                "Minggu",
-              ].indexOf(item.NamaHari);
+              const index = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"].indexOf(item.NamaHari);
               if (index >= 0) weeklyData[index] = item.TotalKonsumsi;
             });
             setChartData(weeklyData);
@@ -780,21 +758,15 @@ export default function HomeTabAir() {
         />
       </View>
       <View style={styles.graphSection}>
-        <Text style={styles.header2}>{`${t(
-          "water_usage_chart"
-        )} (${filterType})`}</Text>
+        <Text style={styles.header2}>{`${t("water_usage_chart")} (${filterType})`}</Text>
         <View style={styles.dropdownContainer}>
           <Text style={styles.label}>Pilih Tampilan Chart:</Text>
           <View style={styles.buttonRow}>
             {["yearly", "monthly", "weekly"].map((type) => (
               <Text
                 key={type}
-                style={[
-                  styles.filterButton,
-                  filterType === type && styles.activeButton,
-                ]}
-                onPress={() => setFilterType(type)}
-              >
+                style={[styles.filterButton, filterType === type && styles.activeButton]}
+                onPress={() => setFilterType(type)}>
                 {type}
               </Text>
             ))}
@@ -837,11 +809,8 @@ export default function HomeTabAir() {
                     backgroundColor: "rgba(0,0,0,0.7)",
                     padding: 6,
                     borderRadius: 6,
-                  }}
-                >
-                  <Text style={{ color: "white", fontSize: 12 }}>
-                    {tooltipPos.value} m³
-                  </Text>
+                  }}>
+                  <Text style={{ color: "white", fontSize: 12 }}>{tooltipPos.value} m³</Text>
                 </View>
               )}
             </View>
@@ -858,18 +827,9 @@ export default function HomeTabAir() {
           {["volume", "lokasi", "tanggal"].map((item) => (
             <TouchableOpacity
               key={item}
-              style={[
-                styles.segmentedButton,
-                filterVolume === item && styles.segmentedButtonActive,
-              ]}
-              onPress={() => setFilterVolume(item)}
-            >
-              <Text
-                style={[
-                  styles.segmentedButtonText,
-                  filterVolume === item && styles.segmentedButtonTextActive,
-                ]}
-              >
+              style={[styles.segmentedButton, filterVolume === item && styles.segmentedButtonActive]}
+              onPress={() => setFilterVolume(item)}>
+              <Text style={[styles.segmentedButtonText, filterVolume === item && styles.segmentedButtonTextActive]}>
                 {item.charAt(0).toUpperCase() + item.slice(1)}
               </Text>
             </TouchableOpacity>
@@ -883,48 +843,24 @@ export default function HomeTabAir() {
             {/* Header */}
             <View style={stylesTable.tableRowHeader}>
               <Text style={[stylesTable.cellHeader, { width: 50 }]}>No</Text>
-              <Text style={[stylesTable.cellHeader, { width: 120 }]}>
-                No Komponen
-              </Text>
-              <Text style={[stylesTable.cellHeader, { width: 150 }]}>
-                Lokasi
-              </Text>
-              <Text style={[stylesTable.cellHeader, { width: 160 }]}>
-                Total Volume Air
-              </Text>
-              <Text style={[stylesTable.cellHeader, { width: 200 }]}>
-                Tanggal
-              </Text>
+              <Text style={[stylesTable.cellHeader, { width: 120 }]}>No Komponen</Text>
+              <Text style={[stylesTable.cellHeader, { width: 150 }]}>Lokasi</Text>
+              <Text style={[stylesTable.cellHeader, { width: 160 }]}>Total Volume Air</Text>
+              <Text style={[stylesTable.cellHeader, { width: 200 }]}>Tanggal</Text>
             </View>
 
             {/* Body */}
             {topKomponenData.map((item, index) => (
               <View key={index} style={stylesTable.tableRow}>
-                <Text style={[stylesTable.cell, { width: 50 }]}>
-                  {index + 1}
-                </Text>
-                <Text
-                  style={[stylesTable.cell, { width: 120 }]}
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                >
+                <Text style={[stylesTable.cell, { width: 50 }]}>{index + 1}</Text>
+                <Text style={[stylesTable.cell, { width: 120 }]} numberOfLines={1} ellipsizeMode="tail">
                   {item.NoKomponen}
                 </Text>
-                <Text
-                  style={[stylesTable.cell, { width: 150 }]}
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                >
+                <Text style={[stylesTable.cell, { width: 150 }]} numberOfLines={1} ellipsizeMode="tail">
                   {item.Lokasi || "-"}
                 </Text>
-                <Text style={[stylesTable.cell, { width: 160 }]}>
-                  {parseFloat(item.TotalVolumeAir).toFixed(2)}
-                </Text>
-                <Text
-                  style={[stylesTable.cell, { width: 200 }]}
-                  numberOfLines={1}
-                  ellipsizeMode="tail"
-                >
+                <Text style={[stylesTable.cell, { width: 160 }]}>{parseFloat(item.TotalVolumeAir).toFixed(2)}</Text>
+                <Text style={[stylesTable.cell, { width: 200 }]} numberOfLines={1} ellipsizeMode="tail">
                   {new Date(item.Tanggal).toLocaleString("id-ID", {
                     day: "numeric",
                     month: "short",

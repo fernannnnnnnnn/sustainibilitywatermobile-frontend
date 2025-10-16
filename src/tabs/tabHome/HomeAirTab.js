@@ -429,7 +429,7 @@ export default function HomeTabAir() {
     useCallback(() => {
       const fetchAll = async () => {
         setIsLoading(true);
-        // setIsError(false);
+        setIsError(false);
         try {
           const [a, b, c, d] = await Promise.all([
             postUser("Dashboard/GetDataChartMonthly", { year: currentYear }),

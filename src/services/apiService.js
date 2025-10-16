@@ -15,7 +15,7 @@ export const API_URL = "https://sia-pt.polytechnic.astra.ac.id/stn-air/";
 
 const apiClient = axios.create({
   baseURL: API_URL,
-  timeout: 10000, // lebih longgar
+  timeout: 10000,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",

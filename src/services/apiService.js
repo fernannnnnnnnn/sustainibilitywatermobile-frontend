@@ -45,9 +45,10 @@ export const postUserArray = async (param, body = {}) => {
     const response = await apiClient.post(`api/${param}`, body);
     let data = response.data;
 
-    if (typeof data === 'string') {
+    if (typeof data === "string") {
       try {
         data = JSON.parse(data);
+        // console.log("✅ API success:", response.data);
       } catch (parseError) {
         console.error("Error parsing data:", parseError);
         return "ERROR";
@@ -64,6 +65,7 @@ export const postUserArray = async (param, body = {}) => {
     console.error("❌ API call failed:", error.message);
     if (error.response) {
       console.error("Response:", error.response.data);
-    } return "ERROR";
+    }
+    return "ERROR";
   }
-}
+};

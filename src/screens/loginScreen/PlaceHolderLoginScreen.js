@@ -19,7 +19,7 @@ import { Ionicons as Icon } from "@expo/vector-icons";
 import { useFonts } from "expo-font";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { postUser } from "../../services/apiService";
+import { postUser, postUserArray } from "../../services/apiService";
 import { useTranslation } from "react-i18next";
 
 const { width, height } = Dimensions.get("window");
@@ -80,7 +80,7 @@ const PlaceHolderLoginScreen = () => {
   const handleAddLogin = async () => {
     const loadUserProfile = async () => {
       try {
-        const data = await postUser("Utilities/LoginHP", {
+        const data = await postUserArray("Utilities/LoginHP", {
           username: username,
           password: password,
         });

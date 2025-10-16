@@ -1,19 +1,18 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import LottieView from "lottie-react-native";
-import FlashMessage, { showMessage } from "react-native-flash-message";
-import DropdownAlert from "react-native-dropdownalert";
-import { useNavigation } from "@react-navigation/native";
-import { useFocusEffect } from "@react-navigation/native";
-import { View, Text, StyleSheet, Pressable, Image, Button } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { Entypo, MaterialIcons } from "@expo/vector-icons";
-import TrioHomeAstraPng from "../../assets/picturePng/TrioAstraHome.png";
-import FotoProfile from "../../assets/picturePng/FotoProfile.png";
-import HomeTabAir from "../../tabs/tabHome/HomeAirTab";
-import HeaderUser from "../../components/Header";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { postUser, API_URL } from "../../services/apiService";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
+import LottieView from "lottie-react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Button, Image, Pressable, StyleSheet, Text, View } from "react-native";
+import DropdownAlert from "react-native-dropdownalert";
+import FlashMessage, { showMessage } from "react-native-flash-message";
+import FotoProfile from "../../assets/picturePng/FotoProfile.png";
+import TrioHomeAstraPng from "../../assets/picturePng/TrioAstraHome.png";
+import HeaderUser from "../../components/Header";
+import { API_URL, postUser } from "../../services/apiService";
+import HomeTabAir from "../../tabs/tabHome/HomeAirTab";
 import { APPLICATION_ID } from "../../Util/Constants";
 
 const PlaceholderScreenHome = () => {
@@ -97,30 +96,21 @@ const PlaceholderScreenHome = () => {
 
   if (!userProfile) {
     return (
-      <LinearGradient
-        colors={["#054599", "#0973FF"]}
-        style={[styles.container, { justifyContent: "center" }]}
-      >
+      <LinearGradient colors={["#054599", "#0973FF"]} style={[styles.container, { justifyContent: "center" }]}>
         <LottieView
           source={require("../../assets/lottieAnimation/CuteBoyRunning_Loading.json")}
           autoPlay
           loop
           style={{ width: 150, height: 150 }}
         />
-        <Text style={{ color: "#fff", marginTop: 16, fontSize: 16 }}>
-          {t("loading")}
-        </Text>
+        <Text style={{ color: "#fff", marginTop: 16, fontSize: 16 }}>{t("loading")}</Text>
       </LinearGradient>
     );
   } else {
     return (
       <View style={{ flex: 1 }}>
         <FlashMessage position="top" />
-        <LinearGradient
-          colors={["#0973FF", "#054599"]}
-          style={styles.container}
-          locations={[0, 0.5]}
-        >
+        <LinearGradient colors={["#0973FF", "#054599"]} style={styles.container} locations={[0, 0.5]}>
           {/* <HeaderUser
           photoSource={
             user?.foto
@@ -172,35 +162,18 @@ const PlaceholderScreenHome = () => {
             </View>
             <View style={styles.buttonRow}>
               <Pressable
-                style={[
-                  styles.toggleButtonAir,
-                  activeTab === "Air"
-                    ? styles.activeButton
-                    : styles.inactiveButton,
-                ]}
-                onPress={() => setActiveTab("Air")}
-              >
-                <Entypo
-                  name="water"
-                  size={24}
-                  color={activeTab === "Air" ? "#0973FF" : "white"}
-                />
+                style={[styles.toggleButtonAir, activeTab === "Air" ? styles.activeButton : styles.inactiveButton]}
+                onPress={() => setActiveTab("Air")}>
+                <Entypo name="water" size={24} color={activeTab === "Air" ? "#0973FF" : "white"} />
               </Pressable>
 
               <Pressable
                 style={[
                   styles.toggleButtonListrik,
-                  activeTab === "Listrik"
-                    ? styles.activeButton
-                    : styles.inactiveButton,
+                  activeTab === "Listrik" ? styles.activeButton : styles.inactiveButton,
                 ]}
-                onPress={() => setActiveTab("Listrik")}
-              >
-                <MaterialIcons
-                  name="electric-bolt"
-                  size={24}
-                  color={activeTab === "Listrik" ? "#0973FF" : "white"}
-                />
+                onPress={() => setActiveTab("Listrik")}>
+                <MaterialIcons name="electric-bolt" size={24} color={activeTab === "Listrik" ? "#0973FF" : "white"} />
               </Pressable>
             </View>
 

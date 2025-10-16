@@ -87,6 +87,7 @@ const PlaceHolderLoginScreen = () => {
 
         if (data === "ERROR") {
           alert("Terjadi kesalahan saat login.");
+          console.log("" , username, password)
           return null;
         }
 

@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-  <!-- Ijinkan koneksi HTTP ke Metro bundler lokal -->
-  <domain-config cleartextTrafficPermitted="true">
-    <domain includeSubdomains="true">10.0.2.2</domain> <!-- emulator -->
-    <domain includeSubdomains="true">10.1.5.2</domain> <!-- IP laptop kamu -->
-    <domain includeSubdomains="true">localhost</domain>
-  </domain-config>
-
-  <!-- Domain backend kamu -->
-  <domain-config cleartextTrafficPermitted="true">
+  <!-- Domain resmi (production) -->
+  <domain-config cleartextTrafficPermitted="false">
     <domain includeSubdomains="true">sia-pt.polytechnic.astra.ac.id</domain>
   </domain-config>
+
+  <!-- Semua domain/IP lokal diperbolehkan di jaringan kampus -->
+  <base-config cleartextTrafficPermitted="true" />
 </network-security-config>

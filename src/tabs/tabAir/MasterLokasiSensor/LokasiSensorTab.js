@@ -7,7 +7,7 @@ import InfoCard from "../../../components/InfoCard";
 import SensorList from "../../../components/SensorList";
 import LokasiSensorPng from "../../../assets/picturePng/LokasiSensor.png";
 import styles from "../../../styles/globalStyles";
-import { postUser } from "../../../services/apiService";
+import { postUser, postUserArray } from "../../../services/apiService";
 import Paging from "../../../components/Paging";
 import SensorListItem from "../../../components/SensorListItem";
 
@@ -49,7 +49,7 @@ const LokasiSensorTab = ({ searchQuery }) => {
       const loadUser = async () => {
         try {
           setLoading(true);
-          const data = await postUser("MasterLokasi/GetDataLokasi", {
+          const data = await postUserArray("MasterLokasi/GetDataLokasi", {
             page: searchParams.page,
             query: searchParams.query,
             sort: searchParams.sort,

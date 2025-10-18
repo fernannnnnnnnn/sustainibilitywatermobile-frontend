@@ -6,7 +6,7 @@ import axios from "axios";
 // const API_URL = "http://10.1.51.114:5255/";
 
 //WIFI Astra
-export const API_URL = "http://10.1.19.29:5255/";
+// export const API_URL = "http://10.1.19.29:5255/";
 
 // WIFI Zidan
 //export const API_URL = "http://10.127.212.240:5255/";
@@ -14,7 +14,7 @@ export const API_URL = "http://10.1.19.29:5255/";
 // export const API_URL = "https://sia-pt.polytechnic.astra.ac.id/stn-air/";
 
 // Wifi Daffa
-// export const API_URL = "http://192.168.1.9:5255/";
+export const API_URL = "http://192.168.1.9:5255/";
 
 const apiClient = axios.create({
   baseURL: API_URL,
@@ -27,6 +27,7 @@ const apiClient = axios.create({
 
 export const postUser = async (param, body = {}) => {
   try {
+    console.log("🔍 API Request to:", `api/${param}`, "with body:", body);
     const response = await apiClient.post(`api/${param}`, body);
     console.log("✅ API success:", response.data);
     return response.data;
